@@ -1,0 +1,6 @@
+// App layout
+.app {
+  display: grid;
+  grid-template-rows: auto $footer-size;
+  height: 100vh;
+}
