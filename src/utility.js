@@ -6,7 +6,12 @@ export default class Utility {
    * @return {number}
    */
   static gcd (a, b) {
-    return (b === 0) ? a : utility.gcd(b, a % b)
+    while (b) {
+      const c = b
+      b = a % b
+      a = c
+    }
+    return a
   }
 
   /**

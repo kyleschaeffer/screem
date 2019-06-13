@@ -9500,7 +9500,13 @@ class Utility {
    * @return {number}
    */
   static gcd(a, b) {
-    return b === 0 ? a : utility.gcd(b, a % b);
+    while (b) {
+      const c = b;
+      b = a % b;
+      a = c;
+    }
+
+    return a;
   }
   /**
    * Display latitude/longitude in a friendly format
@@ -9739,10 +9745,23 @@ var _default = {
 
     /**
      * Screen aspect ratio (long edge to short edge)
-     * @return {number}
+     * @return {string}
      */
     aspect() {
-      return _utility.default.gcd(this.screenWidth, this.screenHeight);
+      // Get greatest common demoninator
+      const gcd = _utility.default.gcd(this.screenWidth, this.screenHeight);
+
+      if (!gcd) return 'Unknown'; // Get edge ratios
+
+      let longRatio = this.screenLong / gcd;
+      let shortRatio = this.screenShort / gcd; // Convert 8:5 to 16:10
+
+      if (longRatio == 8 && shortRatio == 5) {
+        longRatio = 16;
+        shortRatio = 10;
+      }
+
+      return `${longRatio}﹕${shortRatio}`;
     }
 
   },
@@ -9898,7 +9917,7 @@ exports.default = _default;
                 description: "Screen aspect ratio (long edge to short edge)"
               }
             },
-            [_c("p", { staticClass: "value" }, [_vm._v("16﹕9")])]
+            [_c("p", { staticClass: "value" }, [_vm._v(_vm._s(_vm.aspect))])]
           ),
           _vm._v(" "),
           _c(
@@ -9974,7 +9993,7 @@ exports.default = _default;
             },
             [
               _vm.locationLatitude && _vm.locationLongitude
-                ? _c("p", { staticClass: "value" }, [
+                ? _c("p", { staticClass: "value sm" }, [
                     _c(
                       "a",
                       {
@@ -9996,7 +10015,7 @@ exports.default = _default;
                       ]
                     )
                   ])
-                : _c("p", { staticClass: "value" }, [
+                : _c("p", { staticClass: "value sm" }, [
                     _vm._v(_vm._s(_vm.location))
                   ])
             ]

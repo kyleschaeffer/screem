@@ -16,7 +16,7 @@
       </card>
 
       <card title="Aspect Ratio" description="Screen aspect ratio (long edge to short edge)">
-        <p class="value">16﹕9</p>
+        <p class="value">{{ aspect }}</p>
       </card>
 
       <card title="CSS Pixel Ratio" description="The density ratio of hardware pixels to CSS pixels">
@@ -36,10 +36,10 @@
       </card>
 
       <card title="Location" description="Device location in latitude and longitude; you may need to grant permission to share your location when prompted">
-        <p v-if="locationLatitude && locationLongitude" class="value">
+        <p v-if="locationLatitude && locationLongitude" class="value sm">
           <a :href="`https://www.google.com/maps/place/${locationLatitude}+${locationLongitude}`" target="_blank">{{ locationLatitude }}, {{ locationLongitude }}</a>
         </p>
-        <p v-else class="value">{{ location }}</p>
+        <p v-else class="value sm">{{ location }}</p>
       </card>
 
       <card title="User Agent" description="Device, operating system, and browser information reported by browser">
@@ -201,10 +201,24 @@ export default {
 
     /**
      * Screen aspect ratio (long edge to short edge)
-     * @return {number}
+     * @return {string}
      */
     aspect () {
-      return Utility.gcd(this.screenWidth, this.screenHeight)
+      // Get greatest common demoninator
+      const gcd = Utility.gcd(this.screenWidth, this.screenHeight)
+      if (!gcd) return 'Unknown'
+
+      // Get edge ratios
+      let longRatio = this.screenLong / gcd
+      let shortRatio = this.screenShort / gcd
+
+      // Convert 8:5 to 16:10
+      if (longRatio == 8 && shortRatio == 5) {
+        longRatio = 16
+        shortRatio = 10
+      }
+
+      return `${longRatio}﹕${shortRatio}`
     },
   },
 
