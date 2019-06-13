@@ -1,0 +1,53 @@
+// Card layout
+.cards {
+  align-content: start;
+  display: grid;
+  grid-gap: 10px;
+  padding: 25px 10px 10px 35px;
+
+  @include mq-up($screen-md) {
+    grid-gap: 15px;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 50px;
+  }
+
+  @include mq-up($screen-lg) {
+    grid-gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Cards
+.card {
+  background: $white;
+  box-shadow: 0 2px 4px transparentize($darker, .9);
+  padding: 15px;
+
+  @include mq-up($screen-md) {
+    padding: 20px;
+  }
+}
+
+// Card content
+.card-title {
+  color: $primary;
+  font-size: .75rem;
+  font-weight: 400;
+  letter-spacing: .03em;
+}
+
+.card-description {
+  color: $medium;
+  font-size: .875rem;
+  font-weight: 300;
+  line-height: $hc;
+}
+
+.value {
+  font-size: 1.5rem;
+  margin: 10px 0 8px;
+
+  &.sm {
+    font-size: 1rem;
+  }
+}

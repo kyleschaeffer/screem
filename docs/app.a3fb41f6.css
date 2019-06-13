@@ -16,11 +16,11 @@ body {
 a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: #ec523d;
+  text-decoration-color: #d63e53;
   transition: color 0.2s ease;
 }
 a:hover, a:focus {
-  color: #eb462f;
+  color: #d33148;
 }
 
 h1,
@@ -235,11 +235,11 @@ kbd.light {
   background-color: #6a6e71;
 }
 .btn.primary {
-  background-color: #ec523d;
-  border-color: #ea3d26;
+  background-color: #d63e53;
+  border-color: #cf2c42;
 }
 .btn.primary:hover, .btn.primary:focus {
-  background-color: #ea3d26;
+  background-color: #cf2c42;
 }
 .btn.secondary {
   background-color: #e0c85d;
@@ -257,11 +257,11 @@ kbd.light {
   background-color: #3aa3c3;
 }
 .btn.danger {
-  background-color: #cc3d50;
-  border-color: #be3244;
+  background-color: #d63e53;
+  border-color: #cf2c42;
 }
 .btn.danger:hover, .btn.danger:focus {
-  background-color: #be3244;
+  background-color: #cf2c42;
 }
 .btn.success {
   background-color: #50c78f;
@@ -288,6 +288,7 @@ kbd.light {
 
 .ruler {
   display: block;
+  height: 100%;
   left: 0;
   opacity: 0.4;
   pointer-events: none;
@@ -295,6 +296,59 @@ kbd.light {
   top: 0;
   width: 100%;
   z-index: 1;
+}
+
+.cards {
+  align-content: start;
+  display: grid;
+  grid-gap: 10px;
+  padding: 25px 10px 10px 35px;
+}
+@media only screen and (min-width: 801px) {
+  .cards {
+    grid-gap: 15px;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 50px;
+  }
+}
+@media only screen and (min-width: 1201px) {
+  .cards {
+    grid-gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(31, 33, 34, 0.1);
+  padding: 15px;
+}
+@media only screen and (min-width: 801px) {
+  .card {
+    padding: 20px;
+  }
+}
+
+.card-title {
+  color: #d63e53;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.card-description {
+  color: #767b7e;
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.2em;
+}
+
+.value {
+  font-size: 1.5rem;
+  margin: 10px 0 8px;
+}
+.value.sm {
+  font-size: 1rem;
 }
 
 .footer {
@@ -355,10 +409,10 @@ kbd.light {
   display: none;
 }
 .footer-links a:hover, .footer-links a:focus {
-  color: #ec523d;
+  color: #d63e53;
 }
 .footer-links a:hover path, .footer-links a:focus path {
-  fill: #ec523d;
+  fill: #d63e53;
 }
 @media only screen and (min-width: 601px) {
   .footer-links a .label {

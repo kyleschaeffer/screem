@@ -24,6 +24,6 @@ export default class Utility {
     let M = 0 | coord
     coord = (coord - M) * 60
     let S = coord.toFixed(precision)
-    return `${D}&deg;${M}&apos;${S}&quot;${H}`
+    return `${D}°${M}'${S}"${H}`
   }
 }

@@ -2,7 +2,50 @@
   <div class="app">
     <ruler v-if="viewportWidth && viewportHeight" :width="viewportWidth" :height="viewportHeight" :ratio="ratio"></ruler>
 
-    <h1>Content</h1>
+    <main class="cards" role="main">
+      <card title="Resolution" description="Approximate screen resolution in hardware pixels (width × height)">
+        <p class="value">{{ resolutionWidth }} × {{ resolutionHeight }}</p>
+      </card>
+
+      <card title="Screen" description="Screen resolution in CSS pixels (width × height)">
+        <p class="value">{{ screenWidth }} × {{ screenHeight }}</p>
+      </card>
+
+      <card title="Viewport" description="Browser viewport size in CSS pixels (width × height)">
+        <p class="value">{{ viewportWidth }} × {{ viewportHeight }}</p>
+      </card>
+
+      <card title="Aspect Ratio" description="Screen aspect ratio (long edge to short edge)">
+        <p class="value">16﹕9</p>
+      </card>
+
+      <card title="CSS Pixel Ratio" description="The density ratio of hardware pixels to CSS pixels">
+        <p class="value">{{ ratio }}﹕1</p>
+      </card>
+
+      <card title="Color Depth" description="Total number of color bits per pixel; on most devices this is the combined total of red, green, and blue channels (for example, 24 bits = 8 bits per R/G/B); some devices also support an alpha channel (for example, 32 bits = 8 bits per R/G/B/A)">
+        <p class="value">{{ colorDepth }}</p>
+      </card>
+
+      <card title="Orientation" description="Screen orientation reported by CSS media queries">
+        <p class="value">{{ orientation }}</p>
+      </card>
+
+      <card title="Language" description="Language code(s) reported by browser">
+        <p class="value">{{ languages.join(', ') }}</p>
+      </card>
+
+      <card title="Location" description="Device location in latitude and longitude; you may need to grant permission to share your location when prompted">
+        <p v-if="locationLatitude && locationLongitude" class="value">
+          <a :href="`https://www.google.com/maps/place/${locationLatitude}+${locationLongitude}`" target="_blank">{{ locationLatitude }}, {{ locationLongitude }}</a>
+        </p>
+        <p v-else class="value">{{ location }}</p>
+      </card>
+
+      <card title="User Agent" description="Device, operating system, and browser information reported by browser">
+        <p class="value sm">{{ userAgent }}</p>
+      </card>
+    </main>
 
     <footer class="footer" role="contentinfo">
       <p class="colophon">
@@ -37,11 +80,13 @@
 </template>
 
 <script>
+import Card from './Card.vue'
 import Ruler from './Ruler.vue'
 import Utility from '../utility'
 
 export default {
   components: {
+    Card,
     Ruler,
   },
 
@@ -81,13 +126,43 @@ export default {
        * Screen orientation (as reported by media query)
        * @type {string}
        */
-      orientation: 'landscape',
+      orientation: 'Landscape',
 
       /**
        * Screen color depth
        * @type {number}
        */
       colorDepth: 0,
+
+      /**
+       * Language codes supported by browser
+       * @type {string[]}
+       */
+      languages: [],
+
+      /**
+       * Current geo-location
+       * @type {string}
+       */
+      location: 'Locating…',
+
+      /**
+       * Location latitude
+       * @type {string}
+       */
+      locationLatitude: '',
+
+      /**
+       * Location longitude
+       * @type {string}
+       */
+      locationLongitude: '',
+
+      /**
+       * User agent string reported by browser
+       * @type {string}
+       */
+      userAgent: '',
     }
   },
 
@@ -140,6 +215,9 @@ export default {
     // Measure on resize
     window.addEventListener('resize', this.measure)
     window.addEventListener('orientationchange', this.measure)
+
+    // Locate
+    this.locate()
   },
 
   methods: {
@@ -153,8 +231,41 @@ export default {
       this.screenHeight = window.screen.height
       this.viewportWidth = window.innerWidth
       this.viewportHeight = window.innerHeight
-      this.orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape'
+      this.orientation = window.matchMedia('(orientation: portrait)').matches ? 'Portrait' : 'Landscape'
       this.colorDepth = window.screen.colorDepth
+      this.languages = window.navigator.languages
+      this.userAgent = window.navigator.userAgent
+    },
+
+    /**
+     * Locate via geo-location
+     * @return {void}
+     */
+    locate () {
+      // Location not supported
+      if (!window.navigator.geolocation) {
+        this.location = 'Not supported'
+        return
+      }
+
+      // Get location
+      window.navigator.geolocation.getCurrentPosition(position => {
+        // String position (older browsers)
+        if (typeof(position) === 'string') {
+          this.location = position
+          return
+        }
+
+        // Latitude/longitude position
+        this.locationLatitude = Utility.location(position.coords.latitude, 90, 3)
+        this.locationLongitude = Utility.location(position.coords.longitude, 180, 3)
+      }, error => {
+        // Error getting location
+        if(error.code === error.PERMISSION_DENIED) this.location = 'Permission denied'
+        else if(error.code === error.POSITION_UNAVAILABLE) this.location = 'Unavailable'
+        else if(error.code === error.TIMEOUT) this.location = 'Timed out'
+        else this.location = 'Unavailable'
+      })
     },
   },
 }
