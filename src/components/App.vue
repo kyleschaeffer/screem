@@ -1,6 +1,8 @@
 <template>
   <div class="app">
-    <screem></screem>
+    <ruler v-if="viewportWidth && viewportHeight" :width="viewportWidth" :height="viewportHeight" :ratio="ratio"></ruler>
+
+    <h1>Content</h1>
 
     <footer class="footer" role="contentinfo">
       <p class="colophon">
@@ -12,7 +14,7 @@
       </p>
       <ul class="footer-links unlist">
         <li>
-          <a href="https://github.com/sprtus/screem">
+          <a href="https://github.com/kyleschaeffer/screem">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
             <span class="label">GitHub</span>
           </a>
@@ -35,11 +37,125 @@
 </template>
 
 <script>
-import Screem from './Screem.vue'
+import Ruler from './Ruler.vue'
+import Utility from '../utility'
 
 export default {
   components: {
-    Screem,
+    Ruler,
+  },
+
+  data () {
+    return {
+      /**
+       * CSS pixel density ratio
+       * @type {number}
+       */
+      ratio: 1,
+
+      /**
+       * Screen width (in CSS pixels)
+       * @type {number}
+       */
+      screenWidth: 0,
+
+      /**
+       * Screen height (in CSS pixels)
+       * @type {number}
+       */
+      screenHeight: 0,
+
+      /**
+       * Viewport width (in CSS pixels)
+       * @type {number}
+       */
+      viewportWidth: 0,
+
+      /**
+       * Viewport height (in CSS pixels)
+       * @type {number}
+       */
+      viewportHeight: 0,
+
+      /**
+       * Screen orientation (as reported by media query)
+       * @type {string}
+       */
+      orientation: 'landscape',
+
+      /**
+       * Screen color depth
+       * @type {number}
+       */
+      colorDepth: 0,
+    }
+  },
+
+  computed: {
+    /**
+     * Screen width (in hardware pixels)
+     * @return {number}
+     */
+    resolutionWidth () {
+      return Math.round(this.screenWidth * this.ratio)
+    },
+
+    /**
+     * Screen height (in hardware pixels)
+     * @return {number}
+     */
+    resolutionHeight () {
+      return Math.round(this.screenHeight * this.ratio)
+    },
+
+    /**
+     * Long edge measurement of screen (in CSS pixels)
+     * @return {number}
+     */
+    screenLong () {
+      return Math.max(this.screenWidth, this.screenHeight)
+    },
+
+    /**
+     * Short edge measurement of screen (in CSS pixels)
+     * @return {number}
+     */
+    screenShort () {
+      return Math.min(this.screenWidth, this.screenHeight)
+    },
+
+    /**
+     * Screen aspect ratio (long edge to short edge)
+     * @return {number}
+     */
+    aspect () {
+      return Utility.gcd(this.screenWidth, this.screenHeight)
+    },
+  },
+
+  mounted () {
+    // Measure screen
+    this.measure()
+
+    // Measure on resize
+    window.addEventListener('resize', this.measure)
+    window.addEventListener('orientationchange', this.measure)
+  },
+
+  methods: {
+    /**
+     * Measure the screen
+     * @return {void}
+     */
+    measure () {
+      this.ratio = window.devicePixelRatio || 1
+      this.screenWidth = window.screen.width
+      this.screenHeight = window.screen.height
+      this.viewportWidth = window.innerWidth
+      this.viewportHeight = window.innerHeight
+      this.orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape'
+      this.colorDepth = window.screen.colorDepth
+    },
   },
 }
 </script>

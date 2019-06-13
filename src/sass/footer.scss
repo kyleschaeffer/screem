@@ -9,6 +9,8 @@
   grid-template-columns: repeat(2, auto);
   justify-content: space-between;
   padding: 0 $s;
+  position: relative;
+  z-index: 2;
 
   strong {
     color: $dark;
